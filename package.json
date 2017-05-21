@@ -1,10 +1,6 @@
 {
   "name": "homebridge-sensibo-sky",
-<<<<<<< HEAD
   "version": "0.1.1",
-=======
-  "version": "0.1.0",
->>>>>>> bba2853c9e4b55d6e5870ec496cb79c6565ca827
   "description": "Homebridge Sensibo Sky",
   "main": "index.js",
   "scripts": {
