@@ -1,5 +1,5 @@
-# homebridge-sensibo
-[Homebridge](https://github.com/nfarina/homebridge) platform plugin for the Sensibo
+# homebridge-sensibo-sky
+[Homebridge](https://github.com/nfarina/homebridge) platform plugin for the Sensibo Sky
 
 # Installation
 
