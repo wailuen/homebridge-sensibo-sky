@@ -1,0 +1,22 @@
+{
+  "name": "homebridge-sensibo-sky",
+  "version": "0.1.0",
+  "description": "Homebridge Sensibo Sky",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wailuen/homebridge-sensibo-sky.git"
+  },
+  "keywords": [
+    "homebride-sensibo-sky"
+  ],
+  "author": "wailuen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wailuen/homebridge-sensibo-sky/issues"
+  },
+  "homepage": "https://github.com/wailuen/homebridge-sensibo-sky#readme"
+}
