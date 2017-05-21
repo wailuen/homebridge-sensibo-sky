@@ -2,9 +2,9 @@ var inherits = require("util").inherits;
 
 var Accessory, Service, Characteristic, uuid;
 const tempOffset = 0.92;
-const stateTimeout = 2000;  //in ms to min time elapse to call for refresh
+const stateTimeout = 20000;  //in ms to min time elapse to call for refresh
 const tempTimeout = 30000;  //in ms to min time elapse before next call for refresh
-const stateRefreshRate = 8000; // Interval for status update
+const stateRefreshRate = 5555; // Interval for status update
 
 
 /*
