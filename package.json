@@ -1,25 +1,90 @@
 {
-  "name": "homebridge-sensibo-sky",
-  "version": "0.1.3",
-  "description": "Homebridge Plugin for Sensibo Sky",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wailuen/homebridge-sensibo-sky.git"
+  "_args": [
+    [
+      {
+        "raw": "homebridge-sensibo-sky",
+        "scope": null,
+        "escapedName": "homebridge-sensibo-sky",
+        "name": "homebridge-sensibo-sky",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/wailuen"
+    ]
+  ],
+  "_from": "homebridge-sensibo-sky@latest",
+  "_id": "homebridge-sensibo-sky@0.1.3",
+  "_inCache": true,
+  "_location": "/homebridge-sensibo-sky",
+  "_nodeVersion": "6.10.3",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/homebridge-sensibo-sky-0.1.3.tgz_1495350608367_0.11502812779508531"
   },
+  "_npmUser": {
+    "name": "wailuen",
+    "email": "wailuen.cheong@gmail.com"
+  },
+  "_npmVersion": "3.10.10",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "homebridge-sensibo-sky",
+    "scope": null,
+    "escapedName": "homebridge-sensibo-sky",
+    "name": "homebridge-sensibo-sky",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/homebridge-sensibo-sky/-/homebridge-sensibo-sky-0.1.3.tgz",
+  "_shasum": "025447ac85b20100823bbc8a61ecfaa9be9ee8cf",
+  "_shrinkwrap": null,
+  "_spec": "homebridge-sensibo-sky",
+  "_where": "/Users/wailuen",
+  "author": {
+    "name": "wailuen"
+  },
+  "bugs": {
+    "url": "https://github.com/wailuen/homebridge-sensibo-sky/issues"
+  },
+  "dependencies": {},
+  "description": "Homebridge Plugin for Sensibo Sky",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "025447ac85b20100823bbc8a61ecfaa9be9ee8cf",
+    "tarball": "https://registry.npmjs.org/homebridge-sensibo-sky/-/homebridge-sensibo-sky-0.1.3.tgz"
+  },
+  "engines": {
+    "homebridge": ">=0.3.0",
+    "node": ">=0.12.0"
+  },
+  "gitHead": "8cce77873fdf70c9b779d2d6ff1d95f969171cd5",
+  "homepage": "https://github.com/wailuen/homebridge-sensibo-sky#readme",
   "keywords": [
     "homebridge-plugin",
     "homebridge-sensibo-sky",
     "sensibo-sky"
   ],
-  "author": "wailuen",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/wailuen/homebridge-sensibo-sky/issues"
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "wailuen",
+      "email": "wailuen.cheong@gmail.com"
+    }
+  ],
+  "name": "homebridge-sensibo-sky",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wailuen/homebridge-sensibo-sky.git"
   },
-  "homepage": "https://github.com/wailuen/homebridge-sensibo-sky#readme",
-  "engines": {
-    "node": ">=0.12.0",
-    "homebridge": ">=0.3.0"
-  }
+  "scripts": {},
+  "version": "0.1.4"
 }
