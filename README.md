@@ -29,8 +29,8 @@ Fields:
 * "platform": Must always be "SensiboSky" (required)
 * "name": Can be anything (required)
 * "apiKey": Sensibo API key, must be obtained from https://home.sensibo.com/me/api (required)
-* "timeLapse": Time in seconds to recycle the status from Sensibo. Too frequent will result in many timeout from sensibo server. Default is 30s.
-* "ai": true or false. In BETA and only works for cooling. This will set the fan speed automatically to achieve the target temperature. If there is demands, I can work on heating too. Default is turnoff (false).
+* "timeLapse": Time in seconds to recycle the status from Sensibo. Too frequent will result in many timeout from sensibo server. Default is 30s (optional)
+* "ai": true or false. In BETA and only works for cooling. This will set the fan speed automatically to achieve the target temperature. If there is demands, I can work on heating too. Default is turnoff (false). (optional)
 
 # Usage Notes
 
