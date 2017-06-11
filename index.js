@@ -21,6 +21,7 @@ function SensiboPlatform(log, config) {
 	this.apiKey = config["apiKey"];
 	this.apiDebug = config["apiDebug"];
 	this.timeLapse = config["timeLapse"];
+	this.AI = config["ai"]; //default state for ai
 	this.api=sensibo;
 	this.log = log;
 	this.debug = log.debug;
@@ -42,9 +43,11 @@ SensiboPlatform.prototype = {
 		var foundAccessories = [];
 		this.deviceLookup = [];
 
+		/*
 		var refreshLoop = function () {
 			setInterval(that.reloadData.bind(that), timeRefresh);
 		};
+		*/
 		sensibo.init(this.apiKey, this.debug);
 		sensibo.getPods(that.log, function (devices) {
 				// success
@@ -52,6 +55,8 @@ SensiboPlatform.prototype = {
 					var device = devices[i];
 					
 					var accessory = undefined;
+					device.AI = that.AI;
+					device.refreshCycle = that.timeLapse;
 					accessory = new SensiboPodAccessory(that, device);
 
 					if (accessory != undefined) {

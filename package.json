@@ -11,16 +11,28 @@
         "type": "tag"
       },
       "/Users/wailuen"
+    ],
+    [
+      {
+        "raw": "homebridge-sensibo-sky",
+        "scope": null,
+        "escapedName": "homebridge-sensibo-sky",
+        "name": "homebridge-sensibo-sky",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/wailuen/log"
     ]
   ],
-  "_from": "homebridge-sensibo-sky@latest",
-  "_id": "homebridge-sensibo-sky@0.1.3",
+  "_from": "homebridge-sensibo-sky",
+  "_id": "homebridge-sensibo-sky@0.1.6",
   "_inCache": true,
   "_location": "/homebridge-sensibo-sky",
   "_nodeVersion": "6.10.3",
   "_npmOperationalInternal": {
     "host": "s3://npm-registry-packages",
-    "tmp": "tmp/homebridge-sensibo-sky-0.1.3.tgz_1495350608367_0.11502812779508531"
+    "tmp": "tmp/homebridge-sensibo-sky-0.1.6.tgz_1495554114653_0.04275012225843966"
   },
   "_npmUser": {
     "name": "wailuen",
@@ -40,11 +52,11 @@
   "_requiredBy": [
     "#USER"
   ],
-  "_resolved": "https://registry.npmjs.org/homebridge-sensibo-sky/-/homebridge-sensibo-sky-0.1.3.tgz",
-  "_shasum": "025447ac85b20100823bbc8a61ecfaa9be9ee8cf",
+  "_resolved": "https://registry.npmjs.org/homebridge-sensibo-sky/-/homebridge-sensibo-sky-0.1.6.tgz",
+  "_shasum": "5378dd630191efa9c8a3df153c01af52e0cbdafc",
   "_shrinkwrap": null,
   "_spec": "homebridge-sensibo-sky",
-  "_where": "/Users/wailuen",
+  "_where": "/Users/wailuen/log",
   "author": {
     "name": "wailuen"
   },
@@ -56,8 +68,8 @@
   "devDependencies": {},
   "directories": {},
   "dist": {
-    "shasum": "025447ac85b20100823bbc8a61ecfaa9be9ee8cf",
-    "tarball": "https://registry.npmjs.org/homebridge-sensibo-sky/-/homebridge-sensibo-sky-0.1.3.tgz"
+    "shasum": "5378dd630191efa9c8a3df153c01af52e0cbdafc",
+    "tarball": "https://registry.npmjs.org/homebridge-sensibo-sky/-/homebridge-sensibo-sky-0.1.6.tgz"
   },
   "engines": {
     "homebridge": ">=0.3.0",
@@ -86,5 +98,5 @@
     "url": "git+https://github.com/wailuen/homebridge-sensibo-sky.git"
   },
   "scripts": {},
-  "version": "0.1.5"
+  "version": "0.1.7"
 }
