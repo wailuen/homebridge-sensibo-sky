@@ -148,7 +148,8 @@ function SensiboPodAccessory(platform, device) {
 			}
 		})
 		.on("set", function (value, callback) {
-			callback();
+			
+			that.log(that.name, "State change set, current ACstate:", that.state.mode, " new state:", value);
 			switch (value) {
 				case Characteristic.TargetHeatingCoolingState.COOL:
 					that.state.mode = "cool";
@@ -170,11 +171,14 @@ function SensiboPodAccessory(platform, device) {
 					that.state.on = false;
 					break;
 			};
+
+
 			that.platform.api.submitState(that.deviceid, that.state, function(data){
 				if (data !== undefined) {
 					logStateChange(that)
 				}
 			});
+			callback();
 		});
 
 	// Current Temperature characteristic
@@ -193,8 +197,8 @@ function SensiboPodAccessory(platform, device) {
 			callback(null, that.state.targetTemperature); 	
 		})
 		.on("set", function(value, callback) {
-			callback();
 			
+			var newTargetTemp = Math.floor(value);
 			// limit temperature to Sensibo standards
 			if (value <= 16.0)
 				value = 16.0;
@@ -212,13 +216,20 @@ function SensiboPodAccessory(platform, device) {
 			
 			that.state.on = true;
 			that.state.targetAcState = true;
-			that.state.targetTemperature = Math.floor(value);
+
+			that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
+			if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
+				
+				that.state.targetTemperature = newTargetTemp;
+				that.platform.api.submitState(that.deviceid, that.state, function(data){
+					if (data !== undefined) {
+						logStateChange(that)
+					}
+				});
+
+			}
+			callback();
 			
-			that.platform.api.submitState(that.deviceid, that.state, function(data){
-				if (data !== undefined) {
-					logStateChange(that)
-				}
-			});
 		});
 		
 	// Cooling Threshold Temperature Characteristic
