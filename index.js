@@ -51,12 +51,16 @@ SensiboPlatform.prototype = {
 		sensibo.init(this.apiKey, this.debug);
 		sensibo.getPods(that.log, function (devices) {
 				// success
+				var podTimeLapse = 0;
+				
 				for (var i = 0; i < devices.length; i++) {
 					var device = devices[i];
 					
 					var accessory = undefined;
+					
 					device.AI = that.AI;
-					device.refreshCycle = that.timeLapse;
+					device.refreshCycle = that.timeLapse + podTimeLapse;
+					podTimeLapse += 0.5;
 					accessory = new SensiboPodAccessory(that, device);
 
 					if (accessory != undefined) {
