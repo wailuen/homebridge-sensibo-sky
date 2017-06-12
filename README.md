@@ -38,6 +38,6 @@ Fields:
 to the constant ERRCONNECT from Sensibo server when there is too many request. 
 * The refresh is now splitted to the individual pods instead of all at one go to mininize error from the sensibo server.
 * Had also resolved bugs on the fan and better error handling when Sensibo server does not respond. 
-* A fan speed of 0 means "auto". Otherwise it makes a logical progression from low to high.
+* A fan speed of 0 means "auto". Otherwise it makes a logical progression from low, medium, medium_high, high.
 
 * Most code adopted from pdlove. Credits goes to original author pdlove 
