@@ -62,6 +62,7 @@ function SensiboPodAccessory(platform, device) {
 	that.state.mode = "cool"; // "heat", "cool", "fan" or "off"
 	that.state.fanLevel = "auto"; // "auto", "high", "medium" or "low"
 	that.state.AI = device.AI || false;
+	that.state.hideHumidity = device.hideHumidity || false;
 	that.state.refreshCycle = (device.refreshCycle*1000) || stateRefreshRate;
 	that.temp.temperature = 16; // float
 	that.temp.humidity = 0; // int
@@ -72,11 +73,10 @@ function SensiboPodAccessory(platform, device) {
 	// that.log (device.id, ": refresh Cycle: ", that.state.refreshCycle);
 
 	//this.loadData();
+	this.loadData.bind(this);
 	setInterval(this.loadData.bind(this), that.state.refreshCycle);
 
 	this.addService(Service.Thermostat);
-	this.addService(Service.Fan);
-	this.addService(Service.HumiditySensor);
 	
 	// AccessoryInformation characteristic
 	// Manufacturer characteristic
@@ -207,6 +207,8 @@ function SensiboPodAccessory(platform, device) {
 			
 			// turn on or off and set the mode based on temperature choice and current temperature
 			// this should be modified, but for now, for Siri to work, this should be done
+			that.coolingThresholdTemperature = Math.round(that.temp.temperature);
+
 			if (value <= that.coolingThresholdTemperature) {
 				that.state.mode = "cool";
 			}
@@ -217,7 +219,7 @@ function SensiboPodAccessory(platform, device) {
 			that.state.on = true;
 			that.state.targetAcState = true;
 
-			that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
+			//that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
 			if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
 				
 				that.state.targetTemperature = newTargetTemp;
@@ -240,7 +242,7 @@ function SensiboPodAccessory(platform, device) {
 		})
 		.on("set", function(value, callback) {
 			callback();
-			//that.log("Setting threshold (name: %s, threshold: %s)", that.name, value);
+			that.log(that.name,": Setting threshold (name: %s, threshold: %s)", that.name, value);
 			that.coolingThresholdTemperature = value;
 			//that.coolingThresholdTemperature = that.temp.temperature;
 		});
@@ -273,93 +275,80 @@ function SensiboPodAccessory(platform, device) {
 			callback(null, batteryPercentage);
 		});
 	
+		
 	// Fan Service
 	// On Characteristic
-	this.getService(Service.Fan)
-		.getCharacteristic(Characteristic.On)
-		.on("get", function (callback) {
-			//that.log(that.deviceid,":",(new Date()).getTime(),":GetFanstate:",that.state.on);
-			callback(null, that.state.on);
-		})
-		.on("set", function(value, callback) {
-			callback();
-			//that.state.on = value;
-			that.platform.api.submitState(that.deviceid, that.state, function(data){
-				if (data !== undefined) {
-					logStateChange(that)
-				}
-			});
-		});
-		
-	// Rotation Speed characteristic
-	this.getService(Service.Fan)
-		.addCharacteristic(Characteristic.RotationSpeed)
-		.on("get", function(callback) {
-			//that.log(that.deviceid,":",(new Date()).getTime(),":GetFanSpeed:",that.state.fanLevel);
-			switch (that.state.fanLevel) {
-				case "low":
-					callback(null, 25);
-					break;
-				case "medium":
-					callback(null, 50);
-					break;
-				case "medium_high":
-					callback(null, 75);
-					break;
-				case "high":
-					callback(null, 100);
-					break;
-				case "auto":
-				default:
-					callback(null, 0);
-					break;
-			}
-		})
-		.on("set", function(value, callback) {
+	if (!that.state.AI) {
+		this.addService(Service.Fan);
 
-/*
-			var curFanState = that.state.fanLevel;
-
-			if (value == 0) {
-				that.state.fanLevel = "auto";
-			} else if (value <= 40) {
-				that.state.fanLevel = "low";
-			} else if (value <= 75) {
-				that.state.fanLevel = "medium";
-			} else if (value <= 100) {
-				that.state.fanLevel = "high";
-			}
-
-
-			if (curFanState !== that.state.fanLevel) {
-			//that.log("Setting:",that.deviceid,":",(new Date()).getTime(),":GetFanSpeed:",that.state.fanLevel," and last update:", that.state.fanLevel.updatetime.getTime());
-				that.platform.api.submitState(that.deviceid, that.state, function(str){
-					// console.log("**STATE OF THE STRING:",str);
-					// Just assume it is successful
-					//if (str.status == "success") {
-					if ((str !== undefined) && (str.status == "success")) {
-						logStateChange(that);
-					} else {
-						that.log("Unsucessful setting:",that.deviceid,":",(new Date()).getTime(),":Reverting to:",curFanState);
+		this.getService(Service.Fan)
+			.getCharacteristic(Characteristic.On)
+			.on("get", function (callback) {
+				//that.log(that.deviceid,":",(new Date()).getTime(),":GetFanstate:",that.state.on);
+				callback(null, that.state.on);
+			})
+			.on("set", function(value, callback) {
+				callback();
+				//that.state.on = value;
+				that.platform.api.submitState(that.deviceid, that.state, function(data){
+					if (data !== undefined) {
+						logStateChange(that)
 					}
-					//}
 				});
-			} else {
-				that.log ("No need to set ");			
-			}
-*/
-			that.setFanLevel(that, value);
-			callback();
+			});
 			
-		});
+		// Rotation Speed characteristic
+		this.getService(Service.Fan)
+			.addCharacteristic(Characteristic.RotationSpeed)
+			.on("get", function(callback) {
+				//that.log(that.deviceid,":",(new Date()).getTime(),":GetFanSpeed:",that.state.fanLevel);
+				switch (that.state.fanLevel) {
+					case "low":
+						callback(null, 25);
+						break;
+					case "medium":
+						callback(null, 50);
+						break;
+					case "medium_high":
+						callback(null, 75);
+						break;
+					case "high":
+						callback(null, 100);
+						break;
+					case "auto":
+					default:
+						callback(null, 0);
+						break;
+				}
+			})
+			.on("set", function(value, callback) {
+				that.setFanLevel(that, value);
+				callback();
+				
+			});
+	}
 	
 	// Relative Humidity Service
 	// Current Relative Humidity characteristic
-	this.getService(Service.HumiditySensor)
-		.getCharacteristic(Characteristic.CurrentRelativeHumidity)
-		.on("get", function(callback) {
-			callback(null, Math.round(that.temp.humidity)); // int value
-		});
+	if (that.state.hideHumidity) {
+		this.getService(Service.Thermostat)
+			.getCharacteristic(Characteristic.CurrentRelativeHumidity)
+			.on("get", function(callback) {
+				callback(null, Math.round(that.temp.humidity)); // int value
+			});
+
+	} else {
+		this.addService(Service.HumiditySensor);
+
+		this.getService(Service.HumiditySensor)
+			.getCharacteristic(Characteristic.CurrentRelativeHumidity)
+			.on("get", function(callback) {
+				callback(null, Math.round(that.temp.humidity)); // int value
+			});		
+	}
+
+
+
 }
 
 function setFanLevel(that, value) {
@@ -376,10 +365,10 @@ function setFanLevel(that, value) {
 		that.state.fanLevel = "medium_high";
 	} else if (value <= 100) {
 		that.state.fanLevel = "high";
-	}
+	} 
 
-	if (curFanState !== that.state.fanLevel) {
-			//that.log("Setting:",that.deviceid,":",(new Date()).getTime(),":GetFanSpeed:",that.state.fanLevel," and last update:", that.state.fanLevel.updatetime.getTime());
+	if ((curFanState !== that.state.fanLevel) && (that.state.fanLevel)) {
+		//that.log("[DEBUG] Fan Setting:",that.deviceid,":",(new Date()),":NewFanSpeed:",that.state.fanLevel, " CurrentFanLevel:",curFanState);
 		that.platform.api.submitState(that.deviceid, that.state, function(str){
 			// console.log("**STATE OF THE STRING:",str);
 			// Just assume it is successful
@@ -417,7 +406,7 @@ function autoAI (that) {
 			//that.state.on = true;
 			that.setFanLevel(that,50);
 			//that.log(that.name," - Setting to MEDIUM");
-		} else if (tempDiff >= 1.0) {
+		} else if (tempDiff >= 1.5) {
 			//that.state.on = true;
 			that.setFanLevel(that,25);
 			//that.log(that.name," - Setting to LOW");
