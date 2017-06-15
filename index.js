@@ -22,6 +22,7 @@ function SensiboPlatform(log, config) {
 	this.apiDebug = config["apiDebug"];
 	this.timeLapse = config["timeLapse"];
 	this.AI = config["ai"]; //default state for ai
+	this.hideHumidity = config["hideHumidity"];
 	this.api=sensibo;
 	this.log = log;
 	this.debug = log.debug;
@@ -60,6 +61,7 @@ SensiboPlatform.prototype = {
 					
 					device.AI = that.AI;
 					device.refreshCycle = that.timeLapse + podTimeLapse;
+					device.hideHumidity = that.hideHumidity || false;
 					podTimeLapse += 0.5;
 					accessory = new SensiboPodAccessory(that, device);
 
