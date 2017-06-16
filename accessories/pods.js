@@ -442,9 +442,9 @@ function refreshState(callback) {
 			that.state.fanLevel = acState.fanLevel;
 			that.state.updatetime = new Date(); // Set our last update time.
 			if (that.state.targetAcState == undefined) that.state.targetAcState = acState.on;
-			
+			if (that.state.AI) that.autoAI(that);
 		}
-		if (that.state.AI) that.autoAI(that);
+		
 		callback();
 	});		
 }
