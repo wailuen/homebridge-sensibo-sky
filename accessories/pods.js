@@ -76,8 +76,6 @@ function SensiboPodAccessory(platform, device) {
 	this.loadData.bind(this);
 	setInterval(this.loadData.bind(this), that.state.refreshCycle);
 
-	this.addService(Service.Thermostat);
-	
 	// AccessoryInformation characteristic
 	// Manufacturer characteristic
 	this.getService(Service.AccessoryInformation)
@@ -85,7 +83,7 @@ function SensiboPodAccessory(platform, device) {
 	
 	// Model characteristic	
 	this.getService(Service.AccessoryInformation)
-		.setCharacteristic(Characteristic.Model, "version 0.2.0");
+		.setCharacteristic(Characteristic.Model, "version 0.2.1");
 	
 	// SerialNumber characteristic
 	this.getService(Service.AccessoryInformation)
@@ -93,6 +91,9 @@ function SensiboPodAccessory(platform, device) {
 	
 	// Thermostat Service	
 	// Current Heating/Cooling Mode characteristic
+
+	this.addService(Service.Thermostat);	
+
 	this.getService(Service.Thermostat)
 		.getCharacteristic(Characteristic.CurrentHeatingCoolingState)
 		.on("get", function (callback) {
@@ -119,7 +120,7 @@ function SensiboPodAccessory(platform, device) {
 				}
 			}
 		});
-		
+
 	// Target Heating/Cooling Mode characteristic
 	this.getService(Service.Thermostat)
 		.getCharacteristic(Characteristic.TargetHeatingCoolingState)
@@ -326,7 +327,7 @@ function SensiboPodAccessory(platform, device) {
 				callback();
 				
 			});
-	}
+	} 
 	
 	// Relative Humidity Service
 	// Current Relative Humidity characteristic
@@ -367,7 +368,7 @@ function setFanLevel(that, value) {
 		that.state.fanLevel = "high";
 	} 
 
-	if ((curFanState !== that.state.fanLevel) && (that.state.fanLevel)) {
+	if ((curFanState !== that.state.fanLevel) && (that.state.fanLevel !== null)) {
 		//that.log("[DEBUG] Fan Setting:",that.deviceid,":",(new Date()),":NewFanSpeed:",that.state.fanLevel, " CurrentFanLevel:",curFanState);
 		that.platform.api.submitState(that.deviceid, that.state, function(str){
 			// console.log("**STATE OF THE STRING:",str);
@@ -400,15 +401,15 @@ function autoAI (that) {
 			//that.log(that.name," - Setting to HIGH");
 		} else if (tempDiff >= 5.0) {
 			//that.state.on = true;
-			that.setFanLevel(that,75);
+			that.setFanLevel(that,100);
 			//that.log(that.name," - Setting to MEDIUM_HIGH");
 		} else if (tempDiff >= 3.0) {
 			//that.state.on = true;
-			that.setFanLevel(that,50);
+			that.setFanLevel(that,75);
 			//that.log(that.name," - Setting to MEDIUM");
-		} else if (tempDiff >= 1.5) {
+		} else if (tempDiff >= 2.0) {
 			//that.state.on = true;
-			that.setFanLevel(that,25);
+			that.setFanLevel(that,50);
 			//that.log(that.name," - Setting to LOW");
 		} else {
 			//that.state.on = true;
