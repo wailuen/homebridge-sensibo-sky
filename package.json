@@ -110,5 +110,5 @@
     "url": "git+https://github.com/wailuen/homebridge-sensibo-sky.git"
   },
   "scripts": {},
-  "version": "0.2.0"
+  "version": "0.2.1"
 }
