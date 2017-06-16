@@ -368,7 +368,7 @@ function setFanLevel(that, value) {
 		that.state.fanLevel = "high";
 	} 
 
-	if ((curFanState !== that.state.fanLevel) && (that.state.fanLevel !== null)) {
+	if ((curFanState != that.state.fanLevel) && (that.state.fanLevel)) {
 		//that.log("[DEBUG] Fan Setting:",that.deviceid,":",(new Date()),":NewFanSpeed:",that.state.fanLevel, " CurrentFanLevel:",curFanState);
 		that.platform.api.submitState(that.deviceid, that.state, function(str){
 			// console.log("**STATE OF THE STRING:",str);
