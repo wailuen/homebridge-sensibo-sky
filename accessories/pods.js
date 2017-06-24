@@ -5,6 +5,7 @@ const tempOffset = 1;
 const stateTimeout = 30000;  //in ms to min time elapse to call for refresh
 const tempTimeout = 10000;  //in ms to min time elapse before next call for refresh
 const stateRefreshRate = 30000; // Interval for status update
+const fanState = {auto:0, low:25, medium:50, medium_high:75, high:100};
 
 
 /*
@@ -150,7 +151,10 @@ function SensiboPodAccessory(platform, device) {
 		})
 		.on("set", function (value, callback) {
 			
+			callback();
 			that.log(that.name, "State change set, current ACstate:", that.state.mode, " new state:", value);
+			//that.log(that.name," State value -",Characteristic.TargetHeatingCoolingState.COOL,Characteristic.TargetHeatingCoolingState.OFF);
+			
 			switch (value) {
 				case Characteristic.TargetHeatingCoolingState.COOL:
 					that.state.mode = "cool";
@@ -172,14 +176,15 @@ function SensiboPodAccessory(platform, device) {
 					that.state.on = false;
 					break;
 			};
+			
 
-
+			that.log(that.name," - Submit state change: New state: ", that.state.mode);
 			that.platform.api.submitState(that.deviceid, that.state, function(data){
 				if (data !== undefined) {
 					logStateChange(that)
 				}
 			});
-			callback();
+			
 		});
 
 	// Current Temperature characteristic
@@ -224,6 +229,7 @@ function SensiboPodAccessory(platform, device) {
 			if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
 				
 				that.state.targetTemperature = newTargetTemp;
+				that.log(that.name," Submit new target temperature: ",that.state.targetTemperature);
 				that.platform.api.submitState(that.deviceid, that.state, function(data){
 					if (data !== undefined) {
 						logStateChange(that)
@@ -243,9 +249,9 @@ function SensiboPodAccessory(platform, device) {
 		})
 		.on("set", function(value, callback) {
 			callback();
-			that.log(that.name,": Setting threshold (name: %s, threshold: %s)", that.name, value);
-			that.coolingThresholdTemperature = value;
-			//that.coolingThresholdTemperature = that.temp.temperature;
+			that.log(that.name,": Setting threshold (name: ",that.name,", threshold: ",value,")", that.name, value);
+			//that.coolingThresholdTemperature = value;
+			that.coolingThresholdTemperature = that.temp.temperature;
 		});
 	
 	// Temperature Display Units characteristic
@@ -303,6 +309,8 @@ function SensiboPodAccessory(platform, device) {
 			.addCharacteristic(Characteristic.RotationSpeed)
 			.on("get", function(callback) {
 				//that.log(that.deviceid,":",(new Date()).getTime(),":GetFanSpeed:",that.state.fanLevel);
+				callback(null, fanState(that.state.fanLevel));
+				/*
 				switch (that.state.fanLevel) {
 					case "low":
 						callback(null, 25);
@@ -321,11 +329,11 @@ function SensiboPodAccessory(platform, device) {
 						callback(null, 0);
 						break;
 				}
+				*/
 			})
 			.on("set", function(value, callback) {
-				that.setFanLevel(that, value);
 				callback();
-				
+				that.setFanLevel(that, value);
 			});
 	} 
 	
@@ -368,7 +376,7 @@ function setFanLevel(that, value) {
 		that.state.fanLevel = "high";
 	} 
 
-	if ((curFanState != that.state.fanLevel) && (that.state.fanLevel)) {
+	if ((curFanState != that.state.fanLevel) && (that.state.fanLevel!== undefined)) {
 		//that.log("[DEBUG] Fan Setting:",that.deviceid,":",(new Date()),":NewFanSpeed:",that.state.fanLevel, " CurrentFanLevel:",curFanState);
 		that.platform.api.submitState(that.deviceid, that.state, function(str){
 			// console.log("**STATE OF THE STRING:",str);
@@ -407,9 +415,9 @@ function autoAI (that) {
 			//that.state.on = true;
 			that.setFanLevel(that,75);
 			//that.log(that.name," - Setting to MEDIUM");
-		} else if (tempDiff >= 2.0) {
+		} else if (tempDiff >= 1.0) {
 			//that.state.on = true;
-			that.setFanLevel(that,50);
+			that.setFanLevel(that,25);
 			//that.log(that.name," - Setting to LOW");
 		} else {
 			//that.state.on = true;
@@ -442,6 +450,7 @@ function refreshState(callback) {
 			that.state.fanLevel = acState.fanLevel;
 			that.state.updatetime = new Date(); // Set our last update time.
 			if (that.state.targetAcState == undefined) that.state.targetAcState = acState.on;
+
 			if (that.state.AI) that.autoAI(that);
 		}
 		
