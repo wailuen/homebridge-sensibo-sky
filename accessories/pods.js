@@ -226,7 +226,7 @@ function SensiboPodAccessory(platform, device) {
 			that.state.targetAcState = true;
 
 			//that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
-			if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
+			////if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
 				
 				that.state.targetTemperature = newTargetTemp;
 				that.log(that.name," Submit new target temperature: ",that.state.targetTemperature);
@@ -236,7 +236,7 @@ function SensiboPodAccessory(platform, device) {
 					}
 				});
 
-			}
+			//}
 			callback();
 			
 		});
