@@ -228,7 +228,7 @@ function SensiboPodAccessory(platform, device) {
 			//that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
 			////if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
 				
-				that.state.targetTemperature = newTargetTemp;
+				//that.state.targetTemperature = newTargetTemp;
 				that.log(that.name," Submit new target temperature: ",that.state.targetTemperature);
 				that.platform.api.submitState(that.deviceid, that.state, function(data){
 					if (data !== undefined) {
