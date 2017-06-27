@@ -68,7 +68,7 @@ function SensiboPodAccessory(platform, device) {
 	that.temp.temperature = 16; // float
 	that.temp.humidity = 0; // int
 	that.temp.battery = 2600; // int in mV
-	that.coolingThresholdTemperature = 32; // float
+	that.coolingThresholdTemperature = 26; // float
 	// End of initial information
 	that.log (device.id, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle);
 	// that.log (device.id, ": refresh Cycle: ", that.state.refreshCycle);
@@ -150,12 +150,13 @@ function SensiboPodAccessory(platform, device) {
 			}
 		})
 		.on("set", function (value, callback) {
-			
-			callback();
 			that.log(that.name, "State change set, current ACstate:", that.state.mode, " new state:", value);
 			//that.log(that.name," State value -",Characteristic.TargetHeatingCoolingState.COOL,Characteristic.TargetHeatingCoolingState.OFF);
 			
 			switch (value) {
+				case Characteristic.TargetHeatingCoolingState.OFF:
+					that.state.on = false;
+					break;
 				case Characteristic.TargetHeatingCoolingState.COOL:
 					that.state.mode = "cool";
 					that.state.on = true;
@@ -167,7 +168,11 @@ function SensiboPodAccessory(platform, device) {
 					that.state.targetAcState = true;
 					break;
 				case Characteristic.TargetHeatingCoolingState.AUTO:
-					that.state.mode = "fan";
+					if (that.state.targetTemperature <= that.temp.temperature) {
+						that.state.mode = "cool";
+					} else {
+						that.state.mode = "heat";
+					}
 					that.state.on = true;
 					that.state.targetAcState = true;
 					break;
@@ -175,15 +180,15 @@ function SensiboPodAccessory(platform, device) {
 					that.state.mode = "cool";
 					that.state.on = false;
 					break;
-			};
-			
+			};		
 
-			that.log(that.name," - Submit state change: New state: ", that.state.mode);
+			that.log(that.name," - Submit state change: New state: ", that.state.mode, "On/Off Status:", that.state.on);
 			that.platform.api.submitState(that.deviceid, that.state, function(data){
 				if (data !== undefined) {
 					logStateChange(that)
 				}
 			});
+			callback();
 			
 		});
 
@@ -225,10 +230,10 @@ function SensiboPodAccessory(platform, device) {
 			that.state.on = true;
 			that.state.targetAcState = true;
 
-			//that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
-			////if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
+			that.log ("[DEBUG temp] ",that.name, " Cur Target temp:",that.state.targetTemperature, " new targetTemp: ", newTargetTemp );
+			if (that.state.targetTemperature !== newTargetTemp) {   // only send if it had changed
 				
-				//that.state.targetTemperature = newTargetTemp;
+				that.state.targetTemperature = newTargetTemp;
 				that.log(that.name," Submit new target temperature: ",that.state.targetTemperature);
 				that.platform.api.submitState(that.deviceid, that.state, function(data){
 					if (data !== undefined) {
@@ -236,7 +241,7 @@ function SensiboPodAccessory(platform, device) {
 					}
 				});
 
-			//}
+			}
 			callback();
 			
 		});
@@ -249,9 +254,9 @@ function SensiboPodAccessory(platform, device) {
 		})
 		.on("set", function(value, callback) {
 			callback();
-			that.log(that.name,": Setting threshold (name: ",that.name,", threshold: ",value,")", that.name, value);
-			//that.coolingThresholdTemperature = value;
-			that.coolingThresholdTemperature = that.temp.temperature;
+			that.log(that.name,": Setting threshold (name: ",that.name,", threshold: ",value,")");
+			that.coolingThresholdTemperature = value;
+			//that.coolingThresholdTemperature = that.temp.temperature;
 		});
 	
 	// Temperature Display Units characteristic
@@ -286,6 +291,7 @@ function SensiboPodAccessory(platform, device) {
 	// Fan Service
 	// On Characteristic
 	if (!that.state.AI) {
+
 		this.addService(Service.Fan);
 
 		this.getService(Service.Fan)
@@ -296,7 +302,8 @@ function SensiboPodAccessory(platform, device) {
 			})
 			.on("set", function(value, callback) {
 				callback();
-				//that.state.on = value;
+				that.state.on = value;
+				//that.log(that.name," - setting fan state to ", value)
 				that.platform.api.submitState(that.deviceid, that.state, function(data){
 					if (data !== undefined) {
 						logStateChange(that)
@@ -309,7 +316,7 @@ function SensiboPodAccessory(platform, device) {
 			.addCharacteristic(Characteristic.RotationSpeed)
 			.on("get", function(callback) {
 				//that.log(that.deviceid,":",(new Date()).getTime(),":GetFanSpeed:",that.state.fanLevel);
-				callback(null, fanState(that.state.fanLevel));
+				callback(null, fanState[that.state.fanLevel]);
 				/*
 				switch (that.state.fanLevel) {
 					case "low":
@@ -336,7 +343,6 @@ function SensiboPodAccessory(platform, device) {
 				that.setFanLevel(that, value);
 			});
 	} 
-	
 	// Relative Humidity Service
 	// Current Relative Humidity characteristic
 	if (that.state.hideHumidity) {
@@ -377,7 +383,7 @@ function setFanLevel(that, value) {
 	} 
 
 	if ((curFanState != that.state.fanLevel) && (that.state.fanLevel!== undefined)) {
-		//that.log("[DEBUG] Fan Setting:",that.deviceid,":",(new Date()),":NewFanSpeed:",that.state.fanLevel, " CurrentFanLevel:",curFanState);
+		that.log("[AI DEBUG] Fan Setting:",that.deviceid,":",(new Date()),":NewFanSpeed:",that.state.fanLevel, " CurrentFanLevel:",curFanState);
 		that.platform.api.submitState(that.deviceid, that.state, function(str){
 			// console.log("**STATE OF THE STRING:",str);
 			// Just assume it is successful
