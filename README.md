@@ -18,7 +18,7 @@ Configuration sample:
 			"name": "Sensibo",
 			"apiKey": "YOUR_SENSIBO_API_ID",
 			"timeLapse": 5,
-			"ai": true,
+			"ai": false,
 			"hideHumidity": true			
 		}
 	],
