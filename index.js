@@ -54,22 +54,26 @@ SensiboPlatform.prototype = {
 				// success
 				var podTimeLapse = 0;
 				
-				for (var i = 0; i < devices.length; i++) {
-					var device = devices[i];
-					
-					var accessory = undefined;
-					
-					device.AI = that.AI;
-					device.refreshCycle = that.timeLapse + podTimeLapse;
-					device.hideHumidity = that.hideHumidity || false;
-					podTimeLapse += 0.5;
-					accessory = new SensiboPodAccessory(that, device);
+				if (devices != null ) {
+					for (var i = 0; i < devices.length; i++) {
+						var device = devices[i];
+						
+						var accessory = undefined;
+						
+						device.AI = that.AI;
+						device.refreshCycle = that.timeLapse + podTimeLapse;
+						device.hideHumidity = that.hideHumidity || false;
+						podTimeLapse += 0.5;
+						accessory = new SensiboPodAccessory(that, device);
 
-					if (accessory != undefined) {
-						that.log("Device Added (Name: %s, ID: %s, Group: %s)", accessory.name, accessory.deviceid, accessory.deviceGroup);
-						that.deviceLookup.push(accessory);
-						foundAccessories.push(accessory);
+						if (accessory != undefined) {
+							that.log("Device Added (Name: %s, ID: %s, Group: %s)", accessory.name, accessory.deviceid, accessory.deviceGroup);
+							that.deviceLookup.push(accessory);
+							foundAccessories.push(accessory);
+						}
 					}
+				} else {
+					that.log("No senisbo devices return from Sensibo server ! Please check your APIkey.");
 				}
 				//refreshLoop();
 				callback(foundAccessories);
