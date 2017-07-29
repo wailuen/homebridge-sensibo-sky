@@ -1,7 +1,7 @@
 {
   "name": "homebridge-sensibo-sky",
   "description": "HomeBridge plugin for Sensibo Sky",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/wailuen/homebridge-sensibo-sky.git"
