@@ -11,6 +11,7 @@
 
 Configuration sample:
 
+Full configuration
  ```
 "platforms": [
 		{
@@ -22,6 +23,18 @@ Configuration sample:
 			"hideFan": false, 
 			"hideHumidity": true,
 			"fixedState" : "auto"			
+		}
+	],
+
+```
+
+Simple configuration
+```
+"platforms": [
+		{
+			"platform": "SensiboSky",
+			"name": "Sensibo",
+			"apiKey": "YOUR_SENSIBO_API_ID"
 		}
 	],
 
