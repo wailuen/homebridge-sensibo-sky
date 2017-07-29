@@ -66,7 +66,16 @@ SensiboPlatform.prototype = {
 						device.hideFan = that.hideFan // if AI is true, hideFan will be meaningless. If AI is false and hideFan is true, will make fan 100% all the time
 						device.refreshCycle = that.timeLapse + podTimeLapse;
 						device.hideHumidity = that.hideHumidity || false;
-						device.fixedState = (that.fixedState.toLowerCase() == "cool")?"cool":((that.fixedState.toLowerCase() == "heat")?"heat":"auto");
+						switch (that.fixedState.toLowerCase()) {
+							case "cool":
+							case "heat":
+							case "manual":
+								device.fixedState = that.fixedState.toLowerCase();
+								break;
+							default:
+								device.fixedState = "auto";	
+						}
+
 						podTimeLapse += 0.5;
 						accessory = new SensiboPodAccessory(that, device);
 

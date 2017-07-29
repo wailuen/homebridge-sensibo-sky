@@ -49,7 +49,7 @@ Fields:
 * "ai": true or false. In BETA and only works for cooling. This will set the fan speed automatically to achieve the target temperature asap. This will also hide the fan since it is no longer manually controlled. If there is demands, I can work on heating too. Default is turnoff (false). (Optional)
 * "hideFan": true or false. When set to true, the fan will be fixed at high provided ai is false. The Fan control is also hidden. Default is false.
 * "hideHumidity": true or false. True would move the humidity info into thermostat detail. Default is false. (Optional)
-* "fixedState": "cool"|"heat"|"auto". Fixed the heating/cooling state of the aircon. Default is "auto"
+* "fixedState": "cool"|"heat"|"manual"|auto". Fixed the heating/cooling state of the aircon. If set to "manual", to be set with Homeapp manually. Default is "auto" where cool/heat decided if the target temp is lower or higher than current
 
 # Usage Notes
 
