@@ -218,21 +218,25 @@ function SensiboPodAccessory(platform, device) {
 				value = 30.0;
 			var newTargetTemp = Math.floor(value);
 
-			if (that.state.fixedState == "auto") {
-			// turn on or off and set the mode based on temperature choice and current temperature
-			// this should be modified, but for now, for Siri to work, this should be done
-				that.coolingThresholdTemperature = Math.round(that.temp.temperature);
+			switch (that.state.fixedState) {
+				case "auto":
+					that.coolingThresholdTemperature = Math.round(that.temp.temperature);
 
-				if (value <= that.coolingThresholdTemperature) {
-					that.state.mode = "cool";
-				}
-				else if (value > that.coolingThresholdTemperature) {
-					that.state.mode = "heat";
-				}
-			} else {
-				that.state.mode = that.state.fixedState;
+					if (value <= that.coolingThresholdTemperature) {
+						that.state.mode = "cool";
+					}
+					else if (value > that.coolingThresholdTemperature) {
+						that.state.mode = "heat";
+					}
+					break;
+				case "manual":
+					// Do nothing
+					break;
+				default:
+					that.state.mode = that.state.fixedState;
+
 			}
-			
+
 			that.state.on = true;
 			that.state.targetAcState = true;
 
