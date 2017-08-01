@@ -85,11 +85,12 @@ SensiboPlatform.prototype = {
 							foundAccessories.push(accessory);
 						}
 					}
+					callback(foundAccessories);
 				} else {
 					that.log("No senisbo devices return from Sensibo server ! Please check your APIkey.");
 				}
 				//refreshLoop();
-				callback(foundAccessories);
+				
 		});
 	}
 };
