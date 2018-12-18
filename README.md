@@ -22,7 +22,8 @@ Full configuration
 			"ai": true,
 			"hideFan": false, 
 			"hideHumidity": true,
-			"fixedState" : "auto"			
+			"fixedState" : "auto"	,
+			"hideClimateReact" : "false"
 		}
 	],
 
@@ -50,6 +51,7 @@ Fields:
 * "hideFan": true or false. When set to true, the fan will be fixed at high provided ai is false. The Fan control is also hidden. Default is false.
 * "hideHumidity": true or false. True would move the humidity info into thermostat detail. Default is false. (Optional)
 * "fixedState": "cool"|"heat"|"manual"|auto". Fixed the heating/cooling state of the aircon. If set to "manual", to be set with Homeapp manually. Default is "auto" where cool/heat decided if the target temp is lower or higher than current
+* "hideClimateReact": true or false. False will add a switch to enable or disable the Climate React function. Configure this within the Sensibo app. Default is true. (Optional)
 
 # Usage Notes
 

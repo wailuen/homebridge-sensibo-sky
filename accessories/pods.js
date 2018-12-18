@@ -5,7 +5,8 @@ const tempOffset = 1;
 const stateTimeout = 30000;  //in ms to min time elapse to call for refresh
 const tempTimeout = 10000;  //in ms to min time elapse before next call for refresh
 const stateRefreshRate = 30000; // Interval for status update
-const fanState = {auto:0, low:25, medium:50, medium_high:75, high:100};
+const fanState = { auto: 0, low: 25, medium: 50, medium_high: 75, high: 100 };
+const climateReactTimeout = 30000;  //in ms to min time elapse to call for refresh
 
 
 /*
@@ -27,8 +28,10 @@ module.exports = function (oAccessory, oService, oCharacteristic, ouuid) {
 		SensiboPodAccessory.prototype.refreshState = refreshState;
 		SensiboPodAccessory.prototype.refreshTemperature = refreshTemperature;
 		SensiboPodAccessory.prototype.setFanLevel = setFanLevel;
-		SensiboPodAccessory.prototype.identify = identify;
-		SensiboPodAccessory.prototype.autoAI = autoAI;
+        SensiboPodAccessory.prototype.identify = identify;
+        SensiboPodAccessory.prototype.autoAI = autoAI;
+        SensiboPodAccessory.prototype.setClimateReact = setClimateReact;
+        SensiboPodAccessory.prototype.refreshClimateReact = refreshClimateReact;
 	
 	}
 	return SensiboPodAccessory;
@@ -42,8 +45,9 @@ function SensiboPodAccessory(platform, device) {
 	this.platform = platform;
 	this.log = platform.log;
 	this.debug = platform.debug;
-	this.state = {};
-	this.temp = {};
+    this.state = {};
+    this.temp = {};
+    this.climateReact = {};
 	
 	var idKey = "hbdev:sensibo:pod:" + this.deviceid;
 	var id = uuid.generate(idKey);
@@ -70,7 +74,9 @@ function SensiboPodAccessory(platform, device) {
 	that.temp.temperature = 16; // float
 	that.temp.humidity = 0; // int
 	that.temp.battery = 2600; // int in mV
-	that.coolingThresholdTemperature = 26; // float
+    that.coolingThresholdTemperature = 26; // float
+    that.climateReact.on = false;
+    that.climateReact.hidden = device.hideClimateReact || true;
 	// End of initial information
 	that.log (that.name, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle, ", fixedState, AI, hideFan :", that.state.fixedState, that.state.AI, that.state.hideFan);
 	// that.log (device.id, ": refresh Cycle: ", that.state.refreshCycle);
@@ -377,7 +383,21 @@ function SensiboPodAccessory(platform, device) {
 			});		
 	}
 
+    // Climate React Service	
+    // On characteristic
+    if (!that.climateReact.hidden) {
+        var climateReactSwitch = new Service.Switch("Climate React");
+        climateReactSwitch.getCharacteristic(Characteristic.On)
+            .on('get', function (callback) {
+                callback(null, that.climateReact.on);
+            })
+            .on('set', function (value, callback) {
+                callback();
+                that.setClimateReact(that, value);
+            });
 
+        this.addService(climateReactSwitch);
+    }
 
 }
 
@@ -511,8 +531,8 @@ function refreshTemperature(callback) {
 
 function refreshAll(callback) {
 	var that=this;
-	//console.log("[%s: Refreshing all for %s]",(new Date()),that.name);
-	this.refreshState(function() { that.refreshTemperature(callback); });
+    //console.log("[%s: Refreshing all for %s]",(new Date()),that.name);
+    this.refreshState(function () { that.refreshTemperature(function () { that.refreshClimateReact(callback) }); });
 }
 	
 function loadData() {
@@ -542,4 +562,40 @@ function logStateChange(that) {
 																		 							 that.state.mode,
 																									 that.state.targetTemperature,
 																									 that.state.fanLevel);
+}
+
+function setClimateReact(that, value) {
+    curClimateReactState = that.climateReact.on;
+    that.climateReact.on = value;
+
+    if (curClimateReactState !== that.climateReact.on && that.climateReact.on !== undefined) {
+        that.platform.api.submitClimateReactState(that.deviceid, that.climateReact.on, function (str) {
+            if (str !== undefined && str.status === "success") {
+                that.log("Changed Climate React status (name: %s, status: %s)", that.name, that.climateReact.on);
+            } else {
+                that.log("Unsucessful setting Climate React:", that.name, ":", new Date());
+            }
+        });
+    }
+}
+
+function refreshClimateReact(callback) {
+    var that = this;
+    var rightnow = new Date();
+
+    if (that.climateReact.updateTime && rightnow.getTime() - that.climateReact.updateTime.getTime() < climateReactTimeout) {
+        if (callback !== undefined) callback();
+        return;
+    }
+
+    if (!that.climateReact.updateTime) that.climateReact.updateTime = rightnow;
+
+    that.platform.api.getClimateReactState(that.deviceid, function (data) {
+        if (data !== undefined) {
+            that.climateReact.on = data.enabled;
+            that.state.updateTime = new Date();
+        }
+
+        callback();
+    });
 }

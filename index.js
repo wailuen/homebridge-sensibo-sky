@@ -28,7 +28,8 @@ function SensiboPlatform(log, config) {
 	this.api=sensibo;
 	this.log = log;
 	this.debug = log.debug;
-	this.deviceLookup = {};
+    this.deviceLookup = {};
+    this.hideClimateReact = config["hideClimateReact"] || true;
 }
 
 SensiboPlatform.prototype = {
@@ -74,7 +75,8 @@ SensiboPlatform.prototype = {
 								break;
 							default:
 								device.fixedState = "auto";	
-						}
+                        }
+                        device.hideClimateReact = that.hideClimateReact || true;
 
 						podTimeLapse += 0.5;
 						accessory = new SensiboPodAccessory(that, device);
