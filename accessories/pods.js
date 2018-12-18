@@ -211,18 +211,20 @@ function SensiboPodAccessory(platform, device) {
 	// Target Temperature characteristic
 	this.getService(Service.Thermostat)
 		.getCharacteristic(Characteristic.TargetTemperature)
+	        .setProps({
+                        format: Characteristic.Formats.FLOAT,
+                        unit: Characteristic.Units.CELSIUS,
+                        maxValue: 30,
+                        minValue: 16,
+                        minStep: 1,
+                        perms: [Characteristic.Perms.READ, Characteristic.Perms.WRITE, Characteristic.Perms.NOTIFY]
+                })
 		.on("get", function(callback) {
 			//that.log(that.deviceid,":",(new Date()).getTime(),":GetTargetTemperature: :",that.state.targetTemperature);
 			callback(null, that.state.targetTemperature); 	
 		})
 		.on("set", function(value, callback) {
-			
-			// limit temperature to Sensibo standards
-			if (value <= 16.0)
-				value = 16.0;
-			else if (value >= 30.0)
-				value = 30.0;
-			var newTargetTemp = Math.floor(value);
+			var newTargetTemp = value;
 
 			switch (that.state.fixedState) {
 				case "auto":
