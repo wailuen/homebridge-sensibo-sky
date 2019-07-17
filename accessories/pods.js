@@ -56,8 +56,8 @@ function SensiboPodAccessory(platform, device) {
 
 	// HomeKit does really strange things since we have to wait on the data to get populated
 	// This is just intro information. It will be corrected in a couple of seconds.
-	that.state.temperatureUnit = device.temperatureUnit || "C"; // "C" or "F"
-	that.state.targetTemperature = device.defaultTemp || that.state.temperatureUnit == "C" ? 25.8 : 78;
+	that.state.temperatureUnit = device.temperatureUnit; // "C" or "F"
+	that.state.targetTemperature = device.defaultTemp
 	that.state.on = false; // true or false
 	that.state.targetAcState = undefined; // true or false for targetState (used for AI)
 	that.state.mode = "cool"; // "heat", "cool", "fan" or "off"
@@ -70,9 +70,9 @@ function SensiboPodAccessory(platform, device) {
 	that.temp.temperature = 16; // float
 	that.temp.humidity = 0; // int
 	that.temp.battery = 2600; // int in mV
-	that.coolingThresholdTemperature = device.defaultTemp || that.state.temperatureUnit == "C" ? 25.8 : 78; // float
+	that.coolingThresholdTemperature = device.defaultTemp
 	// End of initial information
-	that.log (that.name, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle, ", fixedState, AI, hideFan :", that.state.fixedState, that.state.AI, that.state.hideFan);
+	that.log (that.name, that.state.temperatureUnit, that.state.targetTemperature, that.coolingThresholdTemperature, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle, ", fixedState, AI, hideFan :", that.state.fixedState, that.state.AI, that.state.hideFan);
 	// that.log (device.id, ": refresh Cycle: ", that.state.refreshCycle);
 
 	//this.loadData();
