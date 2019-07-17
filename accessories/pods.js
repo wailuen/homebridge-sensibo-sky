@@ -56,8 +56,8 @@ function SensiboPodAccessory(platform, device) {
 
 	// HomeKit does really strange things since we have to wait on the data to get populated
 	// This is just intro information. It will be corrected in a couple of seconds.
-	that.state.targetTemperature = 25; // float
-	that.state.temperatureUnit = "C"; // "C" or "F"
+	that.state.temperatureUnit = device.temperatureUnit || "C"; // "C" or "F"
+	that.state.targetTemperature = device.defaultTemp || that.state.temperatureUnit == "C" ? 25.8 : 78;
 	that.state.on = false; // true or false
 	that.state.targetAcState = undefined; // true or false for targetState (used for AI)
 	that.state.mode = "cool"; // "heat", "cool", "fan" or "off"
@@ -70,7 +70,7 @@ function SensiboPodAccessory(platform, device) {
 	that.temp.temperature = 16; // float
 	that.temp.humidity = 0; // int
 	that.temp.battery = 2600; // int in mV
-	that.coolingThresholdTemperature = 26; // float
+	that.coolingThresholdTemperature = device.defaultTemp || that.state.temperatureUnit == "C" ? 25.8 : 78; // float
 	// End of initial information
 	that.log (that.name, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle, ", fixedState, AI, hideFan :", that.state.fixedState, that.state.AI, that.state.hideFan);
 	// that.log (device.id, ": refresh Cycle: ", that.state.refreshCycle);
@@ -215,7 +215,7 @@ function SensiboPodAccessory(platform, device) {
 				value = 16.0;
 			else if (value >= 30.0)
 				value = 30.0;
-			var newTargetTemp = Math.floor(value);
+			var newTargetTemp = value //Math.floor(value);
 
 			switch (that.state.fixedState) {
 				case "auto":
@@ -262,9 +262,9 @@ function SensiboPodAccessory(platform, device) {
 			callback(null, that.coolingThresholdTemperature);
 		})
 		.on("set", function(value, callback) {
-			callback();
 			that.log(that.name,": Setting threshold (name: ",that.name,", threshold: ",value,")");
 			that.coolingThresholdTemperature = value;
+			that.getService(Service.Thermostat).getCharacteristic(Characteristic.TargetTemperature).setValue(value, callback);
 			//that.coolingThresholdTemperature = that.temp.temperature;
 		});
 	
