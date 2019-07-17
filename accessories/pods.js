@@ -209,8 +209,7 @@ function SensiboPodAccessory(platform, device) {
 			//that.log(that.deviceid,":",(new Date()).getTime(),":GetTargetTemperature: :",that.state.targetTemperature);
 			callback(null, that.state.targetTemperature); 	
 		})
-		.on("set", function(value, callback) {
-			
+		.on("set", function(value, callback) {			
 			// limit temperature to Sensibo standards
 			if (value <= 16.0)
 				value = 16.0;
@@ -288,11 +287,11 @@ function SensiboPodAccessory(platform, device) {
 			var batteryPercentage;
 		
 			if (that.temp.battery >= batteryMaxVoltage)
-				var batteryPercentage = 100;
+				batteryPercentage = 100;
 			else if (that.temp.battery <= batteryMinVoltage)
-				var batteryPercentage = 0;
+				batteryPercentage = 0;
 			else
-				var batteryPercentage = (that.temp.battery - batteryMinVoltage) / (batteryMaxVoltage - batteryMinVoltage);
+				batteryPercentage = (that.temp.battery - batteryMinVoltage) / (batteryMaxVoltage - batteryMinVoltage);
 			
 			callback(null, batteryPercentage);
 		});
@@ -424,7 +423,7 @@ function setFanLevel(that, value) {
 
 function autoAI (that) {
 
-	var tempDiff =  parseFloat((that.temp.temperature - that.state.targetTemperature)/that.state.targetTemperature*100).toFixed(1);
+	var tempDiff =  parseFloat(((that.temp.temperature - that.state.targetTemperature)/that.state.targetTemperature*100).toFixed(1));
 
 	if (that.state.on) {
 		//that.log(that.name," - Auto calibratiing to minmizie difference between current and target: ",tempDiff,"%");
@@ -467,8 +466,13 @@ function refreshState(callback) {
 	// Update the State
 	that.platform.api.getState(that.deviceid, function(acState) {
 		if (acState !== undefined ) {
+			//all internal logic is in celsius, so convert to celsius
 			that.state.targetTemperature = acState.targetTemperature;
 			that.state.temperatureUnit = acState.temperatureUnit;
+			if (that.state.temperatureUnit == "F")
+			{
+				that.state.targetTemperature = convertToCelsius(that.state.targetTemperature)
+			}
 			that.state.on = acState.on;
 			
 			that.state.mode = acState.mode;
@@ -515,6 +519,11 @@ function refreshAll(callback) {
 	this.refreshState(function() { that.refreshTemperature(callback); });
 }
 	
+function convertToCelsius(value)
+{
+	return (value - 32) / 1.8;
+}
+
 function loadData() {
 	var that = this;
 	this.refreshAll(function() { 
