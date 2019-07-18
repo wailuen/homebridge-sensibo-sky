@@ -1,10 +1,10 @@
 {
-  "name": "homebridge-sensibo-sky",
+  "name": "homebridge-sensibo-sky-combine",
   "description": "HomeBridge plugin for Sensibo Sky",
   "version": "0.4.2",
   "repository": {
     "type": "git",
-    "url": "git://github.com/wailuen/homebridge-sensibo-sky.git"
+    "url": "git://github.com/combine-enterprises/homebridge-sensibo-sky-combine.git"
   },
   "license": "ISC",
   "preferGlobal": true,

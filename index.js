@@ -34,7 +34,7 @@ function SensiboPlatform(log, config) {
 SensiboPlatform.prototype = {
 	reloadData: function (callback) {
 		//This is called when we need to refresh all Wink device information.
-		this.debug("Refreshing Sensibo Data");
+		this.debug("Refreshing Sensibo data");
 		for (var i = 0; i < this.deviceLookup.length; i++) {
 			this.deviceLookup[i].loadData();
 		}
@@ -87,7 +87,7 @@ SensiboPlatform.prototype = {
 					}
 					callback(foundAccessories);
 				} else {
-					that.log("No senisbo devices return from Sensibo server ! Please check your APIkey.");
+					that.log("No Sensibo devices return from Sensibo server ! Please check your API key.");
 				}
 				//refreshLoop();
 				
