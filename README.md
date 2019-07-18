@@ -1,10 +1,10 @@
-# homebridge-sensibo-sky
+# homebridge-sensibo-sky-combine
 [Homebridge](https://github.com/nfarina/homebridge) platform plugin for the Sensibo Sky
 
 # Installation
 
 1. Install homebridge using: npm install -g homebridge
-2. Install this plugin using: npm install -g homebridge-sensibo-sky
+2. Install this plugin using: npm install -g homebridge-sensibo-sky-combine
 3. Update your configuration file. See sample config.json snippet below. 
 
 # Configuration
