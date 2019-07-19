@@ -13,7 +13,7 @@ module.exports = function (homebridge) {
 
 	SensiboPodAccessory = require('./accessories/pods')(Accessory, Service, Characteristic, uuid);
 
-	homebridge.registerPlatform("homebridge-sensibo-sky", "SensiboSky", SensiboPlatform);
+	homebridge.registerPlatform("@combine-enterprises/homebridge-sensibo-sky", "SensiboSky", SensiboPlatform);
 };
 
 function SensiboPlatform(log, config) {
