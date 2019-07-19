@@ -1,4 +1,4 @@
-# homebridge-sensibo-sky-combine
+# homebridge-sensibo-sky
 [Homebridge](https://github.com/nfarina/homebridge) platform plugin for the Sensibo Sky
 
 # Installation
@@ -22,7 +22,7 @@ Full configuration
 			"ai": true,
 			"hideFan": false, 
 			"hideHumidity": true,
-			"fixedState" : "auto"			
+			"fixedState" : "auto"
 		}
 	],
 
