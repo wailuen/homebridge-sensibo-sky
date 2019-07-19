@@ -4,7 +4,7 @@
 # Installation
 
 1. Install homebridge using: npm install -g homebridge
-2. Install this plugin using: npm install -g homebridge-sensibo-sky-combine
+2. Install this plugin using: npm install -g @combine-enterprises/homebridge-sensibo-sky
 3. Update your configuration file. See sample config.json snippet below. 
 
 # Configuration
