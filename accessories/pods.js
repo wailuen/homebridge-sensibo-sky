@@ -56,8 +56,8 @@ function SensiboPodAccessory(platform, device) {
 
 	// HomeKit does really strange things since we have to wait on the data to get populated
 	// This is just intro information. It will be corrected in a couple of seconds.
-	that.state.targetTemperature = 25; // float
-	that.state.temperatureUnit = "C"; // "C" or "F"
+	that.state.temperatureUnit = device.temperatureUnit; // "C" or "F"
+	that.state.targetTemperature = device.defaultTemp
 	that.state.on = false; // true or false
 	that.state.targetAcState = undefined; // true or false for targetState (used for AI)
 	that.state.mode = "cool"; // "heat", "cool", "fan" or "off"
@@ -70,9 +70,9 @@ function SensiboPodAccessory(platform, device) {
 	that.temp.temperature = 16; // float
 	that.temp.humidity = 0; // int
 	that.temp.battery = 2600; // int in mV
-	that.coolingThresholdTemperature = 26; // float
+	that.coolingThresholdTemperature = device.defaultTemp
 	// End of initial information
-	that.log (that.name, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle, ", fixedState, AI, hideFan :", that.state.fixedState, that.state.AI, that.state.hideFan);
+	that.log (that.name, that.state.temperatureUnit, that.state.targetTemperature, that.coolingThresholdTemperature, ": AI State: ", that.state.AI, ", RefreshCycle: ", that.state.refreshCycle, ", fixedState, AI, hideFan :", that.state.fixedState, that.state.AI, that.state.hideFan);
 	// that.log (device.id, ": refresh Cycle: ", that.state.refreshCycle);
 
 	//this.loadData();
@@ -217,8 +217,14 @@ function SensiboPodAccessory(platform, device) {
 			//that.log(that.deviceid,":",(new Date()).getTime(),":GetTargetTemperature: :",that.state.targetTemperature);
 			callback(null, that.state.targetTemperature); 	
 		})
-		.on("set", function(value, callback) {
-			var newTargetTemp = value;
+
+		.on("set", function(value, callback) {			
+			// limit temperature to Sensibo standards
+			if (value <= 16.0)
+				value = 16.0;
+			else if (value >= 30.0)
+				value = 30.0;
+			var newTargetTemp = value //Math.floor(value);
 
 			switch (that.state.fixedState) {
 				case "auto":
@@ -265,9 +271,9 @@ function SensiboPodAccessory(platform, device) {
 			callback(null, that.coolingThresholdTemperature);
 		})
 		.on("set", function(value, callback) {
-			callback();
 			that.log(that.name,": Setting threshold (name: ",that.name,", threshold: ",value,")");
 			that.coolingThresholdTemperature = value;
+			that.getService(Service.Thermostat).getCharacteristic(Characteristic.TargetTemperature).setValue(value, callback);
 			//that.coolingThresholdTemperature = that.temp.temperature;
 		});
 	
@@ -290,11 +296,11 @@ function SensiboPodAccessory(platform, device) {
 			var batteryPercentage;
 		
 			if (that.temp.battery >= batteryMaxVoltage)
-				var batteryPercentage = 100;
+				batteryPercentage = 100;
 			else if (that.temp.battery <= batteryMinVoltage)
-				var batteryPercentage = 0;
+				batteryPercentage = 0;
 			else
-				var batteryPercentage = (that.temp.battery - batteryMinVoltage) / (batteryMaxVoltage - batteryMinVoltage);
+				batteryPercentage = (that.temp.battery - batteryMinVoltage) / (batteryMaxVoltage - batteryMinVoltage);
 			
 			callback(null, batteryPercentage);
 		});
@@ -426,7 +432,7 @@ function setFanLevel(that, value) {
 
 function autoAI (that) {
 
-	var tempDiff =  parseFloat((that.temp.temperature - that.state.targetTemperature)/that.state.targetTemperature*100).toFixed(1);
+	var tempDiff =  parseFloat(((that.temp.temperature - that.state.targetTemperature)/that.state.targetTemperature*100).toFixed(1));
 
 	if (that.state.on) {
 		//that.log(that.name," - Auto calibratiing to minmizie difference between current and target: ",tempDiff,"%");
@@ -469,8 +475,13 @@ function refreshState(callback) {
 	// Update the State
 	that.platform.api.getState(that.deviceid, function(acState) {
 		if (acState !== undefined ) {
+			//all internal logic is in celsius, so convert to celsius
 			that.state.targetTemperature = acState.targetTemperature;
 			that.state.temperatureUnit = acState.temperatureUnit;
+			if (that.state.temperatureUnit == "F")
+			{
+				that.state.targetTemperature = convertToCelsius(that.state.targetTemperature)
+			}
 			that.state.on = acState.on;
 			
 			that.state.mode = acState.mode;
@@ -517,6 +528,11 @@ function refreshAll(callback) {
 	this.refreshState(function() { that.refreshTemperature(callback); });
 }
 	
+function convertToCelsius(value)
+{
+	return (value - 32) / 1.8;
+}
+
 function loadData() {
 	var that = this;
 	this.refreshAll(function() { 
